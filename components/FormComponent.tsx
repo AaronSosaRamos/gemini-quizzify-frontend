@@ -34,7 +34,7 @@ const formSchema = z.object({
         "img",
         "youtube_url",
     ]),
-    language: z.enum(["en", "es", "fr", "de", "it"]),
+    lang: z.enum(["en", "es", "fr", "de", "it"]),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -233,14 +233,14 @@ export default function FormComponent() {
 
                 <div className="mb-4">
                     <label
-                        htmlFor="language"
+                        htmlFor="lang"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
                         Language
                     </label>
                     <select
-                        id="language"
-                        {...register("language")}
+                        id="lang"
+                        {...register("lang")}
                         className="mt-1 p-3 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                     >
                         <option value="en">English</option>
@@ -249,9 +249,9 @@ export default function FormComponent() {
                         <option value="de">German</option>
                         <option value="it">Italian</option>
                     </select>
-                    {errors.language && (
+                    {errors.lang && (
                         <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                            {errors.language.message}
+                            {errors.lang.message}
                         </p>
                     )}
                 </div>
