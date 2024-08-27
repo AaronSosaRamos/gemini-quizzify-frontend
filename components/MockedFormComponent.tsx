@@ -8,7 +8,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CircleSpinner from "./Spinner";
 
-// Definir el esquema de validación usando zod
 const formSchema = z.object({
   topic: z.string().min(1, "Topic is required"),
   n_questions: z
