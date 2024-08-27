@@ -1,4 +1,3 @@
-import { ThemeProvider } from "../context/ThemeContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import type { Metadata } from "next";
@@ -17,11 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white dark:bg-gray-900 transition-colors duration-300">
-        <ThemeProvider>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </ThemeProvider>
+        <Header />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
       </body>
     </html>
   );

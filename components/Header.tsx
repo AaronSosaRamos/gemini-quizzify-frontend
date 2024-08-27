@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
-import { useTheme } from "../context/ThemeContext"; // Usar el hook personalizado
 import { motion } from "framer-motion";
 import { FaBars, FaTimes } from "react-icons/fa";
 
@@ -17,7 +15,6 @@ const navigation = [
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
   
   return (
     <header className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 shadow-lg">
@@ -49,28 +46,8 @@ export default function Header() {
                 </motion.span>
               </Link>
             ))}
-            <button
-              onClick={toggleTheme}
-              className="ml-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-2 rounded-full focus:outline-none"
-            >
-              {theme === "dark" ? (
-                <SunIcon className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <MoonIcon className="h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
           </nav>
           <div className="md:hidden flex items-center">
-            <button
-              onClick={toggleTheme}
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-2 rounded-full focus:outline-none"
-            >
-              {theme === "dark" ? (
-                <SunIcon className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <MoonIcon className="h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="ml-4 text-white hover:text-yellow-300 focus:outline-none"

@@ -1,11 +1,9 @@
 "use client";
 
-import { useTheme } from "../context/ThemeContext"; 
 import { motion } from "framer-motion";
 import { FaTwitter, FaLinkedin } from "react-icons/fa";
 
 export default function Footer() {
-  const { theme } = useTheme(); 
 
   return (
     <footer className="bg-gradient-to-r from-purple-600 via-blue-500 to-green-400">
