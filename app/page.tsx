@@ -1,10 +1,9 @@
 "use client"
 
-import MockedFormComponent from "@/components/MockedFormComponent";
-
+import FormComponent from "@/components/FormComponent";
 
 export default function Home() {
   return (
-    <MockedFormComponent />
+    <FormComponent />
   );
 }
