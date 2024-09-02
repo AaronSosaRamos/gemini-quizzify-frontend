@@ -7,7 +7,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Features", href: "/features" },
+  { name: "Quizzify", href: "/quizzify" },
   { name: "Pricing", href: "/pricing" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },

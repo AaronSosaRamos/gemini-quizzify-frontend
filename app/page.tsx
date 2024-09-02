@@ -1,9 +1,9 @@
 "use client"
 
-import FormComponent from "@/components/FormComponent";
+import MainPage from "@/components/MainPage";
 
 export default function Home() {
   return (
-    <FormComponent />
+    <MainPage />
   );
 }
