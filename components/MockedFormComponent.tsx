@@ -8,6 +8,20 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CircleSpinner from "./Spinner";
 
+import { openEndedQuestions } from "../components/MockQuestions/OpenEndedQuestions";
+import { fillInTheBlankQuestions } from "../components/MockQuestions/FillInTheBlankQuestions";
+import { trueFalseQuestions } from "../components/MockQuestions/TrueFalseQuestions";
+import { multipleChoiceQuestions } from "../components/MockQuestions/MultipleChoiceQuestions";
+import { relateConceptsQuestions } from "../components/MockQuestions/RelateConceptsQuestions";
+import { mathExerciseQuestions } from "../components/MockQuestions/MathExerciseQuestions";
+
+import OpenEndedQuestion from "../components/QuestionTypes/OpenEndedQuestion";
+import FillInTheBlankQuestion from "../components/QuestionTypes/FillInTheBlankQuestion";
+import TrueFalseQuestion from "../components/QuestionTypes/TrueFalseQuestion";
+import MultipleChoiceQuestion from "../components/QuestionTypes/MultipleChoiceQuestion";
+import RelateConceptsQuestion from "../components/QuestionTypes/RelateConceptsQuestion";
+import MathExerciseQuestion from "../components/QuestionTypes/MathExerciseQuestion";
+
 const formSchema = z.object({
   topic: z.string().min(1, "Topic is required"),
   n_questions: z
@@ -34,52 +48,84 @@ const formSchema = z.object({
     "youtube_url",
   ]),
   language: z.enum(["en", "es", "fr", "de", "it"]),
+  question_type: z.enum([
+    "fill_in_the_blank",
+    "open_ended",
+    "true_false",
+    "multiple_choice",
+    "relate_concepts",
+    "math_exercises",
+  ]),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-type Question = {
+interface OpenEndedQuestion {
+  question: string;
+  answer: string;
+  feedback: string[];
+}
+
+interface FillInTheBlankQuestion {
+  question: string;
+  blanks: { key: string; value: string }[];
+  word_bank: string[];
+  explanation: string;
+}
+
+interface TrueFalseQuestion {
+  question: string;
+  answer: boolean;
+  explanation: string;
+}
+
+interface MultipleChoiceQuestion {
   question: string;
   choices: { key: string; value: string }[];
   answer: string;
   explanation: string;
-};
+}
 
-const mockQuestions: Question[] = [
-  {
-    question: "What is the definition of Machine Learning according to Arthur Samuel?",
-    choices: [
-      { key: "A", value: "Machine Learning is a field of study that gives computers the ability to learn without being explicitly programmed." },
-      { key: "B", value: "Machine Learning is a branch of artificial intelligence that focuses on the development of algorithms that can learn from data." },
-      { key: "C", value: "Machine Learning is a type of computer programming that allows computers to learn from their mistakes." },
-      { key: "D", value: "Machine Learning is a field of study that focuses on the development of algorithms that can solve complex problems." },
-    ],
-    answer: "A",
-    explanation: "Arthur Samuel defined Machine Learning as a field of study that gives computers the ability to learn without being explicitly programmed.",
-  },
-  {
-    question: "Which of the following is NOT a type of Machine Learning?",
-    choices: [
-      { key: "A", value: "Supervised Learning" },
-      { key: "B", value: "Unsupervised Learning" },
-      { key: "C", value: "Reinforcement Learning" },
-      { key: "D", value: "Supernatural Learning" },
-    ],
-    answer: "D",
-    explanation: "Supernatural Learning is not a type of Machine Learning. Supervised Learning, Unsupervised Learning, and Reinforcement Learning are the three main types of Machine Learning.",
-  },
-  {
-    question: "Which of the following is a type of machine learning algorithm?",
-    choices: [
-      { key: "A", value: "Supervised Learning" },
-      { key: "B", value: "Unsupervised Learning" },
-      { key: "C", value: "Reinforcement Learning" },
-      { key: "D", value: "All of the above" },
-    ],
-    answer: "D",
-    explanation: "All of the choices are types of machine learning algorithms.",
+interface RelateConceptsQuestion {
+  question: string;
+  pairs: { term: string; meaning: string }[];
+  answer: { term: string; meaning: string }[];
+  explanation: string;
+}
+
+interface MathExerciseQuestion {
+  question: string;
+  solution: string;
+  correct_answer: string;
+  explanation: string;
+}
+
+type Question =
+  | OpenEndedQuestion
+  | FillInTheBlankQuestion
+  | TrueFalseQuestion
+  | MultipleChoiceQuestion
+  | RelateConceptsQuestion
+  | MathExerciseQuestion;
+
+const getQuestionsByType = (type: string): Question[] => {
+  switch (type) {
+    case "open_ended":
+      return openEndedQuestions;
+    case "fill_in_the_blank":
+      return fillInTheBlankQuestions;
+    case "true_false":
+      return trueFalseQuestions;
+    case "multiple_choice":
+      return multipleChoiceQuestions;
+    case "relate_concepts":
+      return relateConceptsQuestions;
+    case "math_exercises":
+      return mathExerciseQuestions;
+    default:
+      return [];
   }
-];
+};
 
 export default function MockedFormComponent() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -87,6 +133,7 @@ export default function MockedFormComponent() {
   const [showQuestions, setShowQuestions] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [questionType, setQuestionType] = useState<string>("");
 
   const {
     register,
@@ -98,11 +145,12 @@ export default function MockedFormComponent() {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form Data Submitted:", data);
-    setLoading(true);
+    
+    setQuestionType(data.question_type);
 
     setTimeout(() => {
-      setQuestions(mockQuestions.slice(0, data.n_questions));
+      const selectedQuestions = getQuestionsByType(data.question_type).slice(0, data.n_questions);
+      setQuestions(selectedQuestions);
       setShowQuestions(true);
       setShowResults(false);
       setLoading(false);
@@ -129,6 +177,95 @@ export default function MockedFormComponent() {
 
   const handleQuizSubmit = () => {
     setShowResults(true);
+  };
+
+  const renderQuestion = (question: Question, index: number) => {
+    switch (questionType) {
+      case "open_ended":
+        const openEndedQ = question as OpenEndedQuestion;
+        return (
+          <OpenEndedQuestion
+            question={openEndedQ.question}
+            answer={openEndedQ.answer}
+            feedback={openEndedQ.feedback}
+            index={index}
+            userAnswer={userAnswers[index]}
+            showResults={showResults}
+            handleAnswerChange={handleAnswerChange}
+          />
+        );
+      case "fill_in_the_blank":
+        const fillInBlankQ = question as FillInTheBlankQuestion;
+        return (
+          <FillInTheBlankQuestion
+            question={fillInBlankQ.question}
+            blanks={fillInBlankQ.blanks}
+            word_bank={fillInBlankQ.word_bank}
+            explanation={fillInBlankQ.explanation}
+            index={index}
+            userAnswer={userAnswers[index]}
+            showResults={showResults}
+            handleAnswerChange={handleAnswerChange}
+          />
+        );
+      case "true_false":
+        const trueFalseQ = question as TrueFalseQuestion;
+        return (
+          <TrueFalseQuestion
+            question={trueFalseQ.question}
+            answer={trueFalseQ.answer}
+            explanation={trueFalseQ.explanation}
+            index={index}
+            userAnswer={userAnswers[index]}
+            showResults={showResults}
+            handleAnswerChange={handleAnswerChange}
+          />
+        );
+      case "multiple_choice":
+        const multipleChoiceQ = question as MultipleChoiceQuestion;
+        return (
+          <MultipleChoiceQuestion
+            question={multipleChoiceQ.question}
+            choices={multipleChoiceQ.choices}
+            answer={multipleChoiceQ.answer}
+            explanation={multipleChoiceQ.explanation}
+            index={index}
+            userAnswer={userAnswers[index]}
+            showResults={showResults}
+            handleAnswerChange={handleAnswerChange}
+          />
+        );
+      case "relate_concepts":
+        const relateConceptsQ = question as RelateConceptsQuestion;
+        return (
+          <RelateConceptsQuestion
+            question={relateConceptsQ.question}
+            pairs={relateConceptsQ.pairs}
+            answer={relateConceptsQ.answer}
+            explanation={relateConceptsQ.explanation}
+            index={index}
+            userAnswer={userAnswers[index]}
+            showResults={showResults}
+            handleAnswerChange={handleAnswerChange}
+          />
+        );
+      case "math_exercises":
+        const mathExerciseQ = question as MathExerciseQuestion;
+        return (
+          <MathExerciseQuestion
+            question={mathExerciseQ.question}
+            solution={mathExerciseQ.solution}
+            correct_answer={mathExerciseQ.correct_answer}
+            explanation={mathExerciseQ.explanation}
+            index={index}
+            userAnswer={userAnswers[index]}
+            showResults={showResults}
+            handleAnswerChange={handleAnswerChange}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -213,6 +350,26 @@ export default function MockedFormComponent() {
           {errors.language && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.language.message}</p>}
         </div>
 
+        <div className="mb-4">
+          <label htmlFor="question_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Question Type
+          </label>
+          <select
+            id="question_type"
+            {...register("question_type")}
+            className="mt-1 p-3 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+          >
+            <option value="">Select question type</option>
+            <option value="fill_in_the_blank">Fill in the Blank</option>
+            <option value="open_ended">Open Ended</option>
+            <option value="true_false">True/False</option>
+            <option value="multiple_choice">Multiple Choice</option>
+            <option value="relate_concepts">Relate Concepts</option>
+            <option value="math_exercises">Math Exercises</option>
+          </select>
+          {errors.question_type && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.question_type.message}</p>}
+        </div>
+
         <div className="mt-6">
           <button
             type="submit"
@@ -229,35 +386,7 @@ export default function MockedFormComponent() {
       {showQuestions && (
         <div className="max-w-2xl w-full p-6 bg-white dark:bg-gray-800 shadow-md rounded-md">
           <h2 className="text-xl font-bold text-center mb-4 text-gray-800 dark:text-white">Generated Questions</h2>
-          {questions.map((question, index) => (
-            <div key={index} className="mb-6">
-              <p className="text-lg font-medium text-gray-900 dark:text-white">{index + 1}. {question.question}</p>
-              <div className="mt-2">
-                {question.choices.map((choice) => (
-                  <div key={choice.key} className="flex items-center mb-2">
-                    <input
-                      type="radio"
-                      id={`question-${index}-choice-${choice.key}`}
-                      name={`question-${index}`}
-                      value={choice.key}
-                      onChange={() => handleAnswerChange(index, choice.key)}
-                      disabled={showResults}
-                      className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                    <label htmlFor={`question-${index}-choice-${choice.key}`} className="ml-2 text-gray-700 dark:text-gray-300">
-                      {choice.value}
-                    </label>
-                  </div>
-                ))}
-              </div>
-              {showResults && (
-                <div className={`mt-2 text-sm ${userAnswers[index] === question.answer ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
-                  {userAnswers[index] === question.answer ? "Correct!" : `Incorrect! The correct answer is ${question.answer}.`}
-                  <p className="text-gray-500 dark:text-gray-400">{question.explanation}</p>
-                </div>
-              )}
-            </div>
-          ))}
+          {questions.map((question, index) => renderQuestion(question, index))}
           {!showResults && (
             <button
               onClick={handleQuizSubmit}
