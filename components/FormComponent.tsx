@@ -48,7 +48,7 @@ const formSchema = z.object({
     "img",
     "youtube_url",
   ]),
-  language: z.enum(["en", "es", "fr", "de", "it"]),
+  lang: z.enum(["en", "es", "fr", "de", "it"]),
   question_type: z.enum([
     "fill_in_the_blank",
     "open_ended",
@@ -359,12 +359,12 @@ export default function MockedFormComponent() {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="lang" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Language
           </label>
           <select
-            id="language"
-            {...register("language")}
+            id="lang"
+            {...register("lang")}
             className="mt-1 p-3 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
           >
             <option value="en">English</option>
@@ -373,7 +373,7 @@ export default function MockedFormComponent() {
             <option value="de">German</option>
             <option value="it">Italian</option>
           </select>
-          {errors.language && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.language.message}</p>}
+          {errors.lang && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lang.message}</p>}
         </div>
 
         <div className="mb-4">
