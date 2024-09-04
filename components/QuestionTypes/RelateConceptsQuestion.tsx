@@ -63,7 +63,7 @@ const RelateConceptsQuestion: React.FC<RelateConceptsQuestionProps> = ({
             </select>
             {incorrect && (
               <p className="text-sm text-red-500 dark:text-red-400">
-                Incorrect! Correct meaning for "{pair.term}" is: {answer.find((a) => a.term === pair.term)?.meaning}
+                Incorrect! Correct meaning for &quot;{pair.term}&quot; is: {answer.find((a) => a.term === pair.term)?.meaning}
               </p>
             )}
           </div>
